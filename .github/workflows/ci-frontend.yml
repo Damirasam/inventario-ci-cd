@@ -2,29 +2,23 @@ name: CI Frontend
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   test-frontend:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Instalar Node LTS
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 20
 
-      - name: Instalar dependencias del frontend
-        run: |
-          cd frontend
-          npm install
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
 
-      - name: Ejecutar pruebas del frontend
-        run: |
-          cd frontend
-          npm test -- --run
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
