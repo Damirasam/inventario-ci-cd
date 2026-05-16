@@ -1,46 +1,27 @@
 name: Deploy (Simulado)
 
 on:
-  workflow_run:
-    workflows: ["CI Backend", "CI Frontend"]
-    types:
-      - completed
+  push:
+    branches: [main]
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Instalar Node LTS
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 20
 
-      - name: Build del backend (simulado)
-        run: |
-          cd backend
-          npm install
-          echo "Compilación backend simulada."
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm ci
 
-      - name: Build del frontend (simulado)
-        run: |
-          cd frontend
-          npm install
-          npm run build
-          echo "Frontend build completado (simulado)."
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
 
-      - name: Crear artefacto final
-        run: |
-          mkdir deploy
-          cp -r backend deploy/backend
-          cp -r frontend/dist deploy/frontend
-          echo "Artefacto preparado."
-
-      - name: Simulación de despliegue
-        run: |
-          echo "Desplegando en entorno ficticio..."
-          echo "Despliegue completado."
+      - name: Simulated deploy
+        run: echo "Deploy completed successfully"
